@@ -1,10 +1,47 @@
-import {Component, NgFor, NgIf, View} from 'angular2/angular2';
+import {
+    Component,
+    NgFor,
+    NgIf,
+    View,
+    Directive,
+    ElementRef,
+    Attribute,
+    NgStyle
+} from 'angular2/angular2';
 import {Router} from 'angular2/router';
 import {CharacterService} from './character-service';
 import {Character} from './character';
 
+@Directive({
+  // using [ ] means selecting an attribute
+  selector: '[x-large]'
+})
+class XLarge {
+  constructor(element: ElementRef) {
+    element.nativeElement.style.fontSize = 'x-large';
+  }
+}
+
+
+@Directive({
+  // using [ ] means selecting an attribute
+  selector: '[set-font]'
+})
+class SetFont {
+  constructor(element: ElementRef, @Attribute('set-font') color: string) {
+    element.nativeElement.style.color = color;
+  }
+}
+
+
 @Component({ selector: 'my-characters' })
 @View({
+  directives: [
+    NgFor,
+    NgIf,
+    XLarge,
+    SetFont
+  ],
   template: `
     <h2>Select a Character</h2>
     <ul class="characters">
@@ -12,11 +49,10 @@ import {Character} from './character';
         <span class="badge">{{character.id}}</span> {{character.name}}</a>
       </li>
     </ul>
-    <h2 *ng-if="currentCharacter">
+    <span *ng-if="currentCharacter" x-large set-font="blue">
       {{currentCharacter.name | uppercase}} is my character
-    </h2>
+    </span>
   `,
-  directives: [NgFor, NgIf],
   styles: [`
     .characters {list-style-type: none; margin-left: 1em; padding: 0; width: 14em;}
     .characters li { cursor: pointer; }
